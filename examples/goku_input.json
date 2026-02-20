@@ -1,0 +1,23 @@
+{
+  "character": "Son Goku",
+  "evidence": [
+    {
+      "id": "E1",
+      "text": "Goku's clash with Beerus threatened to destroy Universe 7.",
+      "source": "DBS Episode 13",
+      "reliability": 0.9
+    },
+    {
+      "id": "E2",
+      "text": "Goku dodged a barrage described as faster than light.",
+      "source": "DBS Manga",
+      "reliability": 0.8
+    },
+    {
+      "id": "E3",
+      "text": "Goku fought for extended periods without clear fatigue.",
+      "source": "Tournament of Power",
+      "reliability": 0.7
+    }
+  ]
+}
