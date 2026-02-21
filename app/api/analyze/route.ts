@@ -27,15 +27,21 @@ function isInput(body: unknown): body is AnalysisInput {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  let requestBody: unknown;
 
-  if (!isInput(body)) {
+  try {
+    requestBody = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
+  }
+
+  if (!isInput(requestBody)) {
     return NextResponse.json(
       { error: 'Invalid input. Provide character + evidence[] with category tags and reliability.' },
       { status: 400 }
     );
   }
 
-  const output = await runAnalysis(body);
+  const output = await runAnalysis(requestBody);
   return NextResponse.json(output);
 }
