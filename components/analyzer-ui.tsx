@@ -14,29 +14,13 @@ function downloadFile(filename: string, content: string, type: string) {
   URL.revokeObjectURL(url);
 }
 
-const sampleEvidence: EvidenceEntry[] = [
-  {
-    id: 'E1',
-    source: 'Chapter 21 panel 5',
-    claim: 'Character blitzed three opponents in an instant.',
-    categoryTags: ['Speed', 'Attack Potency'],
-    reliability: 85
-  },
-  {
-    id: 'E2',
-    source: 'Episode 12',
-    claim: 'Character fought for 8 hours without tiring.',
-    categoryTags: ['Stamina'],
-    reliability: 80
-  }
-];
-
 export default function AnalyzerUI() {
   const [name, setName] = useState('');
   const [verse, setVerse] = useState('');
   const [notes, setNotes] = useState('');
-  const [evidenceText, setEvidenceText] = useState(JSON.stringify(sampleEvidence, null, 2));
+  const [evidenceText, setEvidenceText] = useState('[]');
   const [result, setResult] = useState<AnalysisOutput | null>(null);
+  const [submittedName, setSubmittedName] = useState('');
   const [error, setError] = useState('');
 
   const canExport = useMemo(() => Boolean(result), [result]);
@@ -45,10 +29,12 @@ export default function AnalyzerUI() {
     setError('');
     try {
       const evidence = JSON.parse(evidenceText) as EvidenceEntry[];
+      const payload = { character: { name, verse, notes }, evidence };
+      setSubmittedName(payload.character.name);
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ character: { name, verse, notes }, evidence })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
@@ -97,7 +83,7 @@ export default function AnalyzerUI() {
           />
         </div>
         <button className="rounded bg-indigo-500 px-4 py-2 font-semibold" onClick={run}>
-          Run analysis
+          Generate
         </button>
         {error && <p className="self-center text-red-400">{error}</p>}
       </section>
@@ -122,6 +108,7 @@ export default function AnalyzerUI() {
           </div>
 
           <h2 className="text-xl font-semibold">Results</h2>
+          <p className="text-sm text-slate-300">Echo (payload.character.name): {submittedName || '(empty)'}</p>
           <p className="text-sm text-slate-300">Categories: {CATEGORIES.join(', ')}</p>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {result.assessments.map((item) => (
